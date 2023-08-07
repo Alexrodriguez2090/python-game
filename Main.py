@@ -1,4 +1,4 @@
-import os
+import os, time
 import pygame
 import Player
 
@@ -21,13 +21,19 @@ startButtonRect = startButtonTextSurface.get_rect(center = (screenWidth/2, scree
 
 clock = pygame.time.Clock()
 running = True
-deltaTime = 0
+framerate = 60
+targetFramerate = 60
 gameState = 1
+prevTime = time.time()
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+    dt = time.time() - prevTime
+    dt *= targetFramerate
+    prevTime = time.time()
 
     if gameState == 0: #Game is active
         #Screen fills
@@ -37,7 +43,7 @@ while running:
 
         #Player
         player.draw(screen)
-        player.update()
+        player.update(dt)
 
         if pygame.key.get_pressed()[pygame.K_ESCAPE] == True:
             gameState = 1
@@ -61,7 +67,8 @@ while running:
 
 
     #Running the game
-    pygame.display.flip()
-    deltaTime = clock.tick(60) / 1000
+    pygame.display.update()
+    clock.tick(framerate)
+    
 
 pygame.quit()

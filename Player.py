@@ -47,25 +47,32 @@ class Player(pygame.sprite.Sprite):
         self.image = self.idleDownFrames[self.animationIndex]
         self.surface = pygame.transform.scale2x(self.image)
         self.rect = self.surface.get_rect(midbottom = (300, 300))
+        self.pos = pygame.math.Vector2(self.rect.topleft)
+
         self.direction = "d"
         self.action = "i"
+        self.speed = 2
     
-    def playerInput(self):
+    def playerInput(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
-            self.rect.top -= 1
+            self.pos.y -= self.speed * dt
+            self.rect.y = round(self.pos.y)
             self.direction = "u"
             self.action = "m"
         if keys[pygame.K_s]:
-            self.rect.top += 1
+            self.pos.y += self.speed * dt
+            self.rect.y = round(self.pos.y)
             self.direction = "d"
             self.action = "m"
         if keys[pygame.K_a]:
-            self.rect.left -= 1
+            self.pos.x -= self.speed * dt
+            self.rect.x = round(self.pos.x)
             self.direction = "l"
             self.action = "m"
         if keys[pygame.K_d]:
-            self.rect.left += 1
+            self.pos.x += self.speed * dt
+            self.rect.x = round(self.pos.x)
             self.direction = "r"
             self.action = "m"
     
@@ -99,7 +106,8 @@ class Player(pygame.sprite.Sprite):
             elif self.action == "m":
                 self.image = self.walkRightFrames[int(self.animationIndex)]
 
-    def update(self):
+    def update(self, dt):
         self.action = "i"
-        self.playerInput()
+        self.pos = pygame.math.Vector2(self.rect.topleft)
+        self.playerInput(dt)
         self.changeSprite()
