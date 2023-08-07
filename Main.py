@@ -1,20 +1,23 @@
 import os
 import pygame
-import Movement
+import Player
+
 
 pygame.init()
 
 screenWidth = 1280
 screenHeight = 720
 screen = pygame.display.set_mode((screenWidth, screenHeight))
-groundSurface = pygame.image.load("images/bg.png").convert()
+groundSurface = pygame.transform.scale(pygame.image.load("images/bg.png").convert(), (screenWidth,screenHeight))
 
-playerSurface = pygame.image.load("images/character/idle down1.png").convert_alpha()
-playerRect = playerSurface.get_rect(midbottom = (300, 300))
+player = pygame.sprite.GroupSingle()
+player.add(Player.Player())
+
+#obstacles = pygame.sprite.Group()
 
 startButtonText = pygame.font.Font(None, 50)
 startButtonTextSurface = startButtonText.render("Start", False, (60, 60, 60))
-startButtonRect = startButtonTextSurface.get_rect(midbottom = (screenWidth/2, screenHeight/2))
+startButtonRect = startButtonTextSurface.get_rect(center = (screenWidth/2, screenHeight/2))
 
 clock = pygame.time.Clock()
 running = True
@@ -28,14 +31,14 @@ while running:
 
     if gameState == 0: #Game is active
         #Screen fills
-        screen.fill("purple")
+        screen.fill("grey")
         screen.blit(groundSurface, (0,0))
 
-        screen.blit(playerSurface, playerRect)
 
+        #Player
+        player.draw(screen)
+        player.update()
 
-        #Controls
-        Movement.player(playerRect)
         if pygame.key.get_pressed()[pygame.K_ESCAPE] == True:
             gameState = 1
 
@@ -52,6 +55,9 @@ while running:
         mousePos = pygame.mouse.get_pos()
         if startButtonRect.collidepoint(mousePos) and pygame.mouse.get_pressed()[0] == True:
             gameState = 0
+    
+    elif gameState == 2: #Pause menu
+        pass
 
 
     #Running the game
